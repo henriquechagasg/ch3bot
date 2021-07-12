@@ -29,9 +29,9 @@ type CheckCnpjData = [ReceitaData, string]
 
 
 export class WppBot {
-    client: Whatsapp
-    c_messages: CurrentClients[]
-    forbidden_citys: string[]
+    private client: Whatsapp
+    private c_messages: CurrentClients[]
+    private forbidden_citys: string[]
 
     constructor(
         client: Whatsapp, 
@@ -150,7 +150,7 @@ Não podemos enviar nosso catálogo nesse caso. Se desejar falar com uma vendedo
 
     private async _checkCNPJ(cnpj: string): Promise<[ReceitaData, string ]> {
         const cnpj_data: ReceitaData = await this._getDataFromReceita(cnpj)
-        if (cnpj_data.situacao !== "ATIVA") {
+        if (cnpj_data.situacao && cnpj_data.situacao !== "ATIVA") {
             return [cnpj_data, "CNPJ_BAIXADO"]
         }
         if (!cnpj_data.atividade_principal) {
@@ -201,7 +201,6 @@ Não podemos enviar nosso catálogo nesse caso. Se desejar falar com uma vendedo
                     .then(result => {this._removeClientFromList(message.from)})
                     .catch(err => console.log(err))
                     break
-                
                 
                 case "CASE_1":
                     this.client.sendText(message.from, this.botAnswers.MESSAGE_1)
